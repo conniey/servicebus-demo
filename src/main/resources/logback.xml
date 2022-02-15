@@ -14,51 +14,6 @@
     <encoder>
       <pattern>%d{HH:mm:ss} [%t] %.-1level %-20logger{20} - %msg%n</pattern>
     </encoder>
-
-    <!-- FILTERS: Evaluators default to JaninoEventEvaluator -->
-
-    <!-- OPTIONAL SUPPRESSION. If we know it is not a link credit or propagation issue, we can suppress this. -->
-    <!-- Log only the 'On next' messages so we know messages are being propagated downstream. -->
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return level &lt; WARN &amp;&amp;
-        logger.equals(&quot;com.azure.messaging.eventhubs.PartitionPumpManager&quot;) &amp;&amp;
-        !message.startsWith(&quot;On next&quot;);</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
-
-    <!-- Log everything from ReceiveLinkHandler except the 'onDelivery' messages. -->
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return level &lt; WARN &amp;&amp;
-        logger.equals(&quot;com.azure.core.amqp.implementation.handler.ReceiveLinkHandler&quot;) &amp;&amp;
-        message.startsWith(&quot;onDelivery&quot;);</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
-
-    <!-- OPTIONAL: Log everything from SendLinkHandler except the 'onLinkFlow' messages. -->
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return logger.equals(&quot;com.azure.core.amqp.implementation.handler.SendLinkHandler&quot;)
-        &amp;&amp;message.startsWith(&quot;onLinkFlow&quot;);</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
-
-    <!-- Log messages in ReactorSender that are not 'On next' or 'process delivered message'. -->
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return logger.equals(&quot;com.azure.core.amqp.implementation.ReactorSender&quot;)
-        &amp;&amp;(message.contains(&quot;On next&quot;) || message.contains(&quot;process delivered message&quot;));</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
   </appender>
 
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
@@ -112,16 +67,10 @@
     </filter>
   </appender>
 
-  <logger name="com.azure.messaging.eventhubs.checkpointstore.blob" level="WARN">
-  </logger>
-
-  <logger name="com.azure.messaging.eventhubs.PartitionBasedLoadBalancer" level="WARN">
-  </logger>
-
   <logger name="com.azure.core.amqp.implementation" level="DEBUG">
   </logger>
 
-  <logger name="com.azure.messaging.eventhubs" level="DEBUG">
+  <logger name="com.azure.messaging.servicebus" level="DEBUG">
   </logger>
 
   <root level="WARN">

@@ -8,4 +8,8 @@ class Environment {
     public static String getQueueName() {
         return System.getenv("SERVICE_BUS_QUEUE_NAME");
     }
+
+    public static boolean forever() {
+        return System.getenv("FOREVER") != null;
+    }
 }

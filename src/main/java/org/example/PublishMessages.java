@@ -23,7 +23,7 @@ public class PublishMessages {
                             .buildAsyncClient();
                 }),
                 sender -> {
-                    return Flux.interval(Duration.ofSeconds(2))
+                    return Flux.interval(Duration.ofSeconds(1))
                             .flatMap(index -> {
                                 final ServiceBusMessage message = new ServiceBusMessage("Contents: " + index)
                                         .setMessageId(index.toString());
