@@ -20,12 +20,14 @@ public class SyncReceiveThrows {
         final ServiceBusReceiverClient receiver = new ServiceBusClientBuilder()
                 .connectionString(connectionString)
                 .receiver()
+                .disableAutoComplete()
+                .maxAutoLockRenewDuration(Duration.ZERO)
                 .queueName(queueName)
                 .buildClient();
 
         int rounds = 100;
         for (int i = 0; i < rounds; i++) {
-            final Thread thread = getNewThread(i, receiver, counter);
+            final Thread thread = createNewThread(i, receiver, counter);
             thread.start();
 
             try {
@@ -37,15 +39,15 @@ public class SyncReceiveThrows {
         }
     }
 
-    private static Thread getNewThread(int round, ServiceBusReceiverClient receiver, AtomicInteger counter) {
+    private static Thread createNewThread(int round, ServiceBusReceiverClient receiver, AtomicInteger counter) {
         return new Thread(() -> {
             System.out.println("---- CREATING " + round + " ----");
-            for (ServiceBusReceivedMessage message : receiver.receiveMessages(NUMBER_TO_RECEIVE, Duration.ofSeconds(10))) {
+            for (ServiceBusReceivedMessage message : receiver.receiveMessages(NUMBER_TO_RECEIVE)) {
                 final int i = counter.incrementAndGet();
-                System.out.printf("%d, messageId: %s%n", i, message.getMessageId());
+                System.out.printf("round[%d] #[%d] messageId[%s] %n", round, i, message.getMessageId());
 
                 if (i % 15 == 0) {
-                    throw new IllegalStateException("Something happened. index: " + i);
+                    throw new IllegalStateException("Test error occurs. index: " + i);
                 }
 
                 try {
